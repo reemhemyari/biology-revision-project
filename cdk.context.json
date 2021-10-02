@@ -1,0 +1,11 @@
+{
+  "availability-zones:account=674312706772:region=eu-west-1": [
+    "eu-west-1a",
+    "eu-west-1b",
+    "eu-west-1c"
+  ],
+  "hosted-zone:account=674312706772:domainName=reemhemyari.com:region=eu-west-1": {
+    "Id": "/hostedzone/Z071843118NRMFRKTL1OY",
+    "Name": "reemhemyari.com."
+  }
+}

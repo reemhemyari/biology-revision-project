@@ -1,9 +1,10 @@
 from aws_cdk import (
     core as cdk,
     aws_rds, aws_lambda, aws_apigateway,aws_route53,
-    aws_route53_targets, aws_certificatemanager, aws_ec2
+    aws_route53_targets, aws_certificatemanager, aws_ec2, aws_lambda_python
 )
 import json
+from aws_cdk.aws_lambda_python import PythonFunction
 
 class BiologyRevisionProjectStack(cdk.Stack):
 
@@ -13,15 +14,15 @@ class BiologyRevisionProjectStack(cdk.Stack):
         db_cluster = self.aurora_serverless_db(vpc)
 
         # Defining an AWS lambda resource
-        project_lambda = aws_lambda.Function(
+        project_lambda = PythonFunction(
             self, "aurora-serverless-db",
+            entry="lambda",
+            index="aurora_serverless_db.py",
             runtime=aws_lambda.Runtime.PYTHON_3_8,
-            code=aws_lambda.Code.asset('lambda'),
-            handler='aurora_serverless_db.handler',
             vpc=vpc,
             environment= {
                 'username': db_cluster.secret.secret_value_from_json('username').to_string(),
-                # 'password': db_cluster.secret.secret_value_from_json('password').to_string(),
+                'password': db_cluster.secret.secret_value_from_json('password').to_string(),
                 'db_endpoint' : db_cluster.cluster_endpoint.hostname
             }
         )
@@ -100,11 +101,28 @@ class BiologyRevisionProjectStack(cdk.Stack):
             }
         )
 
+        database_security_group = aws_ec2.SecurityGroup(self, "database-security-group",
+                                                     vpc=vpc, allow_all_outbound=False,
+                                                     security_group_name="DatabaseSecurityGroup")
+        database_security_group.add_ingress_rule(peer=aws_ec2.Peer.ipv4("10.0.0.0/16"),
+                                                 connection=aws_ec2.Port(string_representation="Postgres",
+                                                                      protocol=aws_ec2.Protocol.TCP,
+                                                                      from_port=5432, to_port=5432))
+        database_security_group.add_ingress_rule(peer=aws_ec2.Peer.ipv4("86.22.20.90/32"),
+                                                 connection=aws_ec2.Port(string_representation="MyHouse",
+                                                                      protocol=aws_ec2.Protocol.TCP,
+                                                                      from_port=5432, to_port=5432))
+        database_security_group.add_egress_rule(peer=aws_ec2.Peer.ipv4("10.0.0.0/16"),
+                                                connection=aws_ec2.Port(string_representation="Postgres",
+                                                                        protocol=aws_ec2.Protocol.TCP,
+                                                                        from_port=5432, to_port=5432))
+
         aurora_db_cluster = aws_rds.ServerlessCluster(
             self, 'database',
             engine=aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
             vpc=vpc,
             vpc_subnets=aws_ec2.SubnetSelection(subnet_type=aws_ec2.SubnetType.ISOLATED),
+            security_groups=[database_security_group],
             parameter_group=parameter_group
         )
 
