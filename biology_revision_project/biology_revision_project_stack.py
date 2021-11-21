@@ -1,10 +1,10 @@
 from aws_cdk import (
     core as cdk,
-    aws_rds, aws_lambda, aws_apigateway,aws_route53,
-    aws_route53_targets, aws_certificatemanager, aws_ec2, aws_lambda_python
+    aws_rds, aws_lambda, aws_apigateway, aws_route53,
+    aws_route53_targets, aws_certificatemanager, aws_ec2
 )
-import json
 from aws_cdk.aws_lambda_python import PythonFunction
+
 
 class BiologyRevisionProjectStack(cdk.Stack):
 
@@ -20,10 +20,10 @@ class BiologyRevisionProjectStack(cdk.Stack):
             index="aurora_serverless_db.py",
             runtime=aws_lambda.Runtime.PYTHON_3_8,
             vpc=vpc,
-            environment= {
+            environment={
                 'username': db_cluster.secret.secret_value_from_json('username').to_string(),
                 'password': db_cluster.secret.secret_value_from_json('password').to_string(),
-                'db_endpoint' : db_cluster.cluster_endpoint.hostname
+                'db_endpoint': db_cluster.cluster_endpoint.hostname
             }
         )
 
@@ -33,7 +33,9 @@ class BiologyRevisionProjectStack(cdk.Stack):
         # storing my domain name & certificate in variables as I will be using them more than once
         domain_name = "reemhemyari.com"
         certificate = aws_certificatemanager.Certificate.from_certificate_arn(self, "domain-certificate",
-            "arn:aws:acm:eu-west-1:674312706772:certificate/bc9a8d93-3b31-48b5-8f12-e146a2dcd494")
+                                                                              "arn:aws:acm:eu-west-1:674312706772"
+                                                                              ":certificate/bc9a8d93-3b31-48b5-8f12"
+                                                                              "-e146a2dcd494")
 
         # defining an api endpoint that uses my lambda function
         api = aws_apigateway.LambdaRestApi(
@@ -53,7 +55,6 @@ class BiologyRevisionProjectStack(cdk.Stack):
             api,
             base_path="biologyrevision"
         )
-
 
         # creates a hosted zone using route 53
         zone = aws_route53.HostedZone.from_lookup(
@@ -102,16 +103,16 @@ class BiologyRevisionProjectStack(cdk.Stack):
         )
 
         database_security_group = aws_ec2.SecurityGroup(self, "database-security-group",
-                                                     vpc=vpc, allow_all_outbound=False,
-                                                     security_group_name="DatabaseSecurityGroup")
+                                                        vpc=vpc, allow_all_outbound=False,
+                                                        security_group_name="DatabaseSecurityGroup")
         database_security_group.add_ingress_rule(peer=aws_ec2.Peer.ipv4("10.0.0.0/16"),
                                                  connection=aws_ec2.Port(string_representation="Postgres",
-                                                                      protocol=aws_ec2.Protocol.TCP,
-                                                                      from_port=5432, to_port=5432))
+                                                                         protocol=aws_ec2.Protocol.TCP,
+                                                                         from_port=5432, to_port=5432))
         database_security_group.add_ingress_rule(peer=aws_ec2.Peer.ipv4("86.22.20.90/32"),
                                                  connection=aws_ec2.Port(string_representation="MyHouse",
-                                                                      protocol=aws_ec2.Protocol.TCP,
-                                                                      from_port=5432, to_port=5432))
+                                                                         protocol=aws_ec2.Protocol.TCP,
+                                                                         from_port=5432, to_port=5432))
         database_security_group.add_egress_rule(peer=aws_ec2.Peer.ipv4("10.0.0.0/16"),
                                                 connection=aws_ec2.Port(string_representation="Postgres",
                                                                         protocol=aws_ec2.Protocol.TCP,
