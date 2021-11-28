@@ -7,28 +7,22 @@ import { Home } from './Home';
 import { NoMatch } from './NoMatch';
 
 import { Layout } from './components/Layout';
+import { NavigationBar } from './components/NavigationBar';
 
 function App() {
   return (
-//    <React.Fragment>
-//        <Router>
-//            <Routes>
-//                <Route exact path='/' component={Home} /> //is the main path, takes you to the home page
-//                <Route component={NoMatch} /> //takes you to an error page if path not found
-//            </Routes>
-//        </Router>
-//    </React.Fragment>
-    <>
-    <Layout>
-        <Router>
-            <Routes>
-                <Route exact path='/' component={Home} />
-                <Route component={NoMatch} />
-            </Routes>
-        </Router>
-    </Layout>
-    </>
+      <>
+      <NavigationBar/>
+      <Layout>
+          <Router>
+              <Routes>
+                  <Route exact path='/' element={<Home />} />
+                  <Route component={NoMatch} />
+              </Routes>
+          </Router>
+      </Layout>
+      </>
   );
-}
+ }
 
 export default App;
