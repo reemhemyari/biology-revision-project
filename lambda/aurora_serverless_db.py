@@ -16,7 +16,7 @@ def handler(event, context):
     print('request: {}'.format(json.dumps(event)))
 
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM test_table')
+    cursor.execute('SELECT * FROM question')
     records = cursor.fetchall()
     return {
         'statusCode': 200,
