@@ -1,29 +1,42 @@
 import React from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import styled from 'styled-components';
 
-const baseURL = "https://jsonplaceholder.typicode.com/posts/1";
+const StyledButton = styled(Button)`
+  color: palevioletred;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid palevioletred;
+  border-radius: 3px;
+  background-color: white;
+`;
+const Home = styled.div`
+  display: flex;
+  justify-content:center;
+  align-items:center;
+`;
 
 export const HomePage = () => {
-    const [post, setPost] = React.useState(null);
+  const navigate = useNavigate();
 
-    React.useEffect(() => {
-        axios.get(baseURL).then((response) => {
-            setPost(response.data);
-        });
-    }, []);
+  function newTest() {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    };
+    fetch('https://api.reemhemyari.com/tests', requestOptions)
+        .then(response => response.json())
+        .then(test => navigate("../test", { state: { test: test } }))
+        .catch(console.log);
+  }
 
-    if (!post) return null;
-
-
-    return(
-        <div>
-            <h2>Welcome to the home page</h2>
-            <p>A well-organized paragraph supports or develops a single controlling idea, which is expressed in a sentence called the topic sentence. A topic sentence has several important functions: it substantiates or supports an essay’s thesis statement; it unifies the content of a paragraph and directs the order of the sentences; and it advises the reader of the subject to be discussed and how the paragraph will discuss it. Readers generally look to the first few sentences in a paragraph to determine the subject and perspective of the paragraph. That’s why it’s often best to put the topic sentence at the very beginning of the paragraph. In some cases, however, it’s more effective to place another sentence before the topic sentence—for example, a sentence linking the current paragraph to the previous one, or one providing background information.</p>
-
-
-            <h2>This is a test run</h2>
-            <p>{post.title}</p>
-            <p>{post.body}</p>
-        </div>
-    );
-};
+  return (
+    <Home>
+      <StyledButton onClick={() => navigate("modules")}>Modules</StyledButton>
+      <StyledButton onClick={() => navigate("unfinished-tests")}>Unfinished Tests</StyledButton>
+      <StyledButton onClick={() => newTest()}>New Test</StyledButton>
+    </Home>
+  );
+}

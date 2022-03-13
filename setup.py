@@ -26,6 +26,8 @@ setuptools.setup(
         "aws-cdk.aws-route53-targets==1.118.0",
         "aws-cdk.aws-ec2==1.118.0",
         "aws-cdk.aws-lambda-python==1.118.0",
+        "aws-cdk.aws-s3==1.118.0",
+        "aws-cdk.aws-s3-deployment==1.118.0",
         "psycopg2-binary==2.9.1"
     ],
 

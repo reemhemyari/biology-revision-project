@@ -1,7 +1,7 @@
 from aws_cdk import (
     core as cdk,
     aws_rds, aws_lambda, aws_apigateway, aws_route53,
-    aws_route53_targets, aws_certificatemanager, aws_ec2
+    aws_route53_targets, aws_certificatemanager, aws_ec2, aws_s3, core, aws_s3_deployment
 )
 from aws_cdk.aws_lambda_python import PythonFunction, PythonLayerVersion
 
@@ -63,11 +63,22 @@ class BiologyRevisionProjectStack(cdk.Stack):
             )]
         )
 
-        self.api_creation(project_lambda)
-
-    def api_creation(self, project_lambda: aws_lambda.Function):
-        # storing my domain name & certificate in variables as I will be using them more than once
         domain_name = "reemhemyari.com"
+        # creates a hosted zone using route 53
+        zone = self.route53_zone(domain_name)
+        self.api_creation(project_lambda, domain_name, zone)
+        self.frontend_creation(domain_name, zone)
+
+    def route53_zone(self, domain_name: str) -> aws_route53.HostedZone:
+        # return a hosted zone using route 53
+        return aws_route53.HostedZone.from_lookup(
+            self, "base-zone",
+            # hosted_zone_id='Z071843118NRMFRKTL1OY'
+            domain_name=domain_name
+        )
+
+    def api_creation(self, project_lambda: aws_lambda.Function, domain_name: str, zone: aws_route53.HostedZone):
+        # storing my domain name & certificate in variables as I will be using them more than once
         certificate = aws_certificatemanager.Certificate.from_certificate_arn(self, "domain-certificate",
                                                                               "arn:aws:acm:eu-west-1:674312706772"
                                                                               ":certificate/bc9a8d93-3b31-48b5-8f12"
@@ -90,13 +101,6 @@ class BiologyRevisionProjectStack(cdk.Stack):
         api.domain_name.add_base_path_mapping(
             api,
             base_path="biologyrevision"
-        )
-
-        # creates a hosted zone using route 53
-        zone = aws_route53.HostedZone.from_lookup(
-            self, "base-zone",
-            # hosted_zone_id='Z071843118NRMFRKTL1OY'
-            domain_name=domain_name
         )
 
         # A Records
@@ -164,3 +168,25 @@ class BiologyRevisionProjectStack(cdk.Stack):
         )
 
         return aurora_db_cluster
+
+    def frontend_creation(self, domain_name: str, zone: aws_route53.HostedZone):
+        bucket_name = f"biorevise.{domain_name}"
+        website_bucket = aws_s3.Bucket(self, "website-s3-bucket",
+                                       bucket_name=bucket_name,
+                                       website_index_document='index.html',
+                                       website_error_document='index.html',
+                                       public_read_access=True,
+                                       removal_policy=core.RemovalPolicy.DESTROY)
+
+        aws_s3_deployment.BucketDeployment(self, "website-s3-deploy",
+                                           sources=[aws_s3_deployment.Source.asset("front_end/build")],
+                                           destination_bucket=website_bucket)
+
+        aws_route53.ARecord(
+            self, "website-dns-www",
+            zone=zone,
+            record_name=bucket_name,
+            target=aws_route53.RecordTarget.from_alias(
+                aws_route53_targets.BucketWebsiteTarget(website_bucket)
+            )
+        )

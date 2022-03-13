@@ -6,10 +6,10 @@ from choose_question import ChooseQuestions
 from service import Service
 # from aws_lambda_powertools.event_handler import content_types
 from aws_lambda_powertools.event_handler.exceptions import BadRequestError
-from aws_lambda_powertools.event_handler.api_gateway import ApiGatewayResolver, ProxyEventType, Response
+from aws_lambda_powertools.event_handler.api_gateway import ApiGatewayResolver, ProxyEventType, CORSConfig
 
-
-app = ApiGatewayResolver(proxy_type=ProxyEventType.ALBEvent)
+cors_config = CORSConfig(max_age=300)
+app = ApiGatewayResolver(proxy_type=ProxyEventType.ALBEvent, cors=cors_config)
 
 data = DataAccess(host=os.environ['db_endpoint'], user=os.environ['username'], password=os.environ['password'])
 questions = ChooseQuestions(data_access=data)
