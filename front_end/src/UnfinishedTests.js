@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 
 const TestButton = styled(Button)`
-  color: palevioletred;
+  color: black;
   font-size: 1em;
   margin: 0.2em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 2px solid #8FBC8F;
   border-radius: 3px;
   background-color: white;
 `;
@@ -21,15 +21,26 @@ const Test = styled.div`
 
 export const UnfinishedTests = () => {
   const [tests, setTests] = useState([]);
+  const [modules, setModules] = useState([]);
 
   useEffect(() => {
-    fetch('https://api.reemhemyari.com/tests?complete=false')
+    fetch(`https://api.reemhemyari.com/modules`)
     .then(res => res.json())
-    .then((data) => setTests(data))
+    .then((data) => setModules(data))
     .catch(console.log)
   }, []);
 
+  useEffect(loadTests, []);
+
   const navigate = useNavigate();
+
+  function loadTests() {
+    fetch(`https://api.reemhemyari.com/tests?complete=false`)
+          .then(res => res.json())
+          .then((data) => setTests(data))
+          .catch(console.log)
+  }
+
 
   function testClick(testId) {
     fetch(`https://api.reemhemyari.com/tests/${testId}`)
@@ -38,14 +49,24 @@ export const UnfinishedTests = () => {
         .catch(console.log);
   }
 
+  function deleteClick(test_id) {
+    const requestOptions = {
+        method: 'DELETE'
+    };
+    fetch(`https://api.reemhemyari.com/tests/${test_id}`, requestOptions)
+        .then(response => loadTests())
+        .catch(console.log);
+  }
+
   return (
     <div className="container" style={{ paddingTop: 10 }}>
       {tests.map((test) => (
         <Test key={test.test_id}>
           <div>Test: {test.test_id}</div>
-          <div>{test.topic_id}</div>
+          <div>topic name</div>
           <div>Started: {test.create_time.replace('T', ' ').substr(0, 19)}</div>
           <TestButton onClick={() => testClick(test.test_id)}>Continue</TestButton>
+          <TestButton onClick={() => deleteClick(test.test_id)}>Delete</TestButton>
         </Test>
       ))}
     </div>

@@ -27,6 +27,19 @@ class DataAccess:
             self.conn.rollback()
             raise
 
+    def get_topic(self, topic_id: int) -> dict:  # returns a list of topics
+        try:
+            cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute('SELECT * FROM topic WHERE topic_id=%s', (topic_id,))
+            topics = cursor.fetchall()
+            cursor.close()
+
+            return topics
+
+        except Exception:
+            self.conn.rollback()
+            raise
+
     def get_topics(self) -> List[dict]:  # returns a list of topics
         try:
             cursor = self.conn.cursor(cursor_factory=RealDictCursor)
@@ -36,6 +49,18 @@ class DataAccess:
 
             return topics
 
+        except Exception:
+            self.conn.rollback()
+            raise
+
+    def get_all_questions(self) -> List[dict]:  # returns a list question ids for all questions
+        try:
+            cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("SELECT question_id FROM question")
+            all_questions = cursor.fetchall()
+            cursor.close()
+
+            return all_questions
         except Exception:
             self.conn.rollback()
             raise
@@ -73,6 +98,35 @@ class DataAccess:
         questions = cursor.fetchall()
         cursor.close()
         return questions
+
+    def get_all_test_questions(self, student_id: int) -> List[dict]:
+        try:
+            cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("SELECT tq.*, t.student_id FROM testquestion tq JOIN test t ON "
+                           "t.test_id=tq.test_id WHERE t.student_id= %s", (student_id,))
+            test_questions = cursor.fetchall()
+            cursor.close()
+
+            return test_questions
+
+        except Exception:
+            self.conn.rollback()
+            raise
+
+    def get_completed_test_questions(self, student_id: int) -> List[dict]:
+        try:
+            cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("SELECT t.topic_id, tq.update_time, o.correct FROM testquestion tq JOIN option o ON "
+                           "tq.option_id=o.option_id JOIN test t ON tq.test_id=t.test_id WHERE update_time > NOW() - "
+                           "INTERVAL '1 YEAR' AND t.student_id=%s", (student_id,))
+            test_questions = cursor.fetchall()
+            cursor.close()
+
+            return test_questions
+
+        except Exception:
+            self.conn.rollback()
+            raise
 
     def get_questions_from_test(self, test_id: int) -> List[dict]:
         # gets list of questions specific to a test
@@ -124,12 +178,12 @@ class DataAccess:
             self.conn.rollback()
             raise
 
-    def new_test(self, student_id: int, topic_id: int) -> int:
+    def new_test(self, student_id: int, topic_id: int, num_questions: int) -> int:
         try:
             cursor = self.conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("""INSERT INTO test (student_id, points_earned, num_questions, topic_id, complete, 
                            create_time) VALUES (%s, %s, %s, %s, %s, NOW()) RETURNING test_id""",
-                           (student_id, 0, 5, topic_id, False))
+                           (student_id, 0, num_questions, topic_id, False))
             test_id_dict = cursor.fetchone()
             test_id = test_id_dict['test_id']
 
@@ -146,7 +200,8 @@ class DataAccess:
         try:
             for question_id_dict in question_ids:
                 cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-                cursor.execute("INSERT INTO testquestion (question_id, test_id) VALUES (%s, %s)", (question_id_dict['question_id'], test_id))
+                cursor.execute("INSERT INTO testquestion (question_id, test_id) VALUES (%s, %s)",
+                               (question_id_dict['question_id'], test_id))
 
             self.conn.commit()
 
@@ -215,6 +270,19 @@ class DataAccess:
         except Exception:
             self.conn.rollback()
             raise
+
+    def delete_test(self, test_id) -> None:
+        try:
+            cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("DELETE FROM testquestion WHERE test_id=%s", (test_id,))
+            cursor.execute("DELETE FROM test WHERE test_id=%s", (test_id,))
+            self.conn.commit()
+            cursor.close()
+            print("deleted test - data")
+        except Exception:
+            self.conn.rollback()
+            raise
+
 
     # def __get_questions_options_for_test(self, test_id: int) -> List[dict]:
     #     cursor = self.conn.cursor()

@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 
 const TestButton = styled(Button)`
-  color: palevioletred;
+  color: black;
   font-size: 1em;
   margin: 0.2em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 2px solid #8FBC8F;
   border-radius: 3px;
   background-color: white;
 `;
@@ -35,7 +35,7 @@ function Topic({children, topicId}) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic_id: topicId })
     };
-    fetch('https://api.reemhemyari.com/tests', requestOptions)
+    fetch(`https://api.reemhemyari.com/tests`, requestOptions)
         .then(response => response.json())
         .then(test => navigate("../test",  { state: { test: test } }))
         .catch(console.log);
@@ -53,7 +53,7 @@ export const Modules = () => {
   const [modules, setModules] = useState([]);
 
   useEffect(() => {
-    fetch('https://api.reemhemyari.com/modules')
+    fetch(`https://api.reemhemyari.com/modules`)
     .then(res => res.json())
     .then((data) => setModules(data))
     .catch(console.log)

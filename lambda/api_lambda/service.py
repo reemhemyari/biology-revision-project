@@ -37,6 +37,10 @@ class Service:
 
         return modules_list
 
+    def get_topic(self, topic_id: int) -> dict:
+        topic = self.data.get_topic(topic_id=topic_id)
+        return topic
+
     def get_test(self, student_id: int, test_id: int) -> dict:
         test = self.data.get_test(student_id=student_id, test_id=test_id)
         # TODO if test does not exist maybe print error message
@@ -57,10 +61,10 @@ class Service:
 
         return tests
 
-    def make_new_test(self, student_id: int, topic_id: int = None) -> dict:
-        test_id = self.data.new_test(student_id=student_id, topic_id=topic_id)  # new test record and return test id
+    def make_new_test(self, student_id: int, topic_id: int = None, num_questions: int = 5) -> dict:
+        test_id = self.data.new_test(student_id=student_id, topic_id=topic_id, num_questions=num_questions)  # new test record and return test id
 
-        question_ids = self.choose_questions.pick_random_questions(num_questions=10, topic_id=topic_id)
+        question_ids = self.choose_questions.pick_random_questions(num_questions=num_questions, topic_id=topic_id)
         self.data.add_questions_to_test(test_id=test_id, question_ids=question_ids)
 
         questions = self.__get_questions_and_options_for_test(test_id=test_id)
@@ -111,3 +115,8 @@ class Service:
 
         points_earned = self.calculate_points_earned(test_id=test_id)
         self.data.update_points_earned(test_id=test_id, points_earned=points_earned)
+
+    def delete_test(self, test_id) -> None:
+        print("I've reached the service layer")
+        self.data.delete_test(test_id=test_id)
+        print("Test should be deleted now - service")

@@ -14,11 +14,11 @@ const Options = styled.div`
 `;
 
 const SubmitButton = styled(Button)`
-  color: palevioletred;
+  color: black;
   font-size: 1em;
   margin: 0.2em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 1px solid #8FBC8F;
   border-radius: 3px;
   background-color: white;
 `;

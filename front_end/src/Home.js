@@ -4,14 +4,15 @@ import Button from "react-bootstrap/Button";
 import styled from 'styled-components';
 
 const StyledButton = styled(Button)`
-  color: palevioletred;
+  color: black;
   font-size: 1em;
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 2px solid #8FBC8F;
   border-radius: 3px;
   background-color: white;
 `;
+
 const Home = styled.div`
   display: flex;
   justify-content:center;
@@ -26,7 +27,7 @@ export const HomePage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
     };
-    fetch('https://api.reemhemyari.com/tests', requestOptions)
+    fetch(`https://api.reemhemyari.com/tests`, requestOptions)
         .then(response => response.json())
         .then(test => navigate("../test", { state: { test: test } }))
         .catch(console.log);

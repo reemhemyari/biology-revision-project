@@ -58,10 +58,22 @@ def get_tests() -> List[dict]:
     return tests
 
 
+# gets a topic
+@app.get("/topics/<topic_id>")
+def get_topic(topic_id: int) -> dict:
+    topic = service.get_topic(topic_id=topic_id)
+    return topic
+
+
 # make a new test
 @app.post("/tests")
 def post_new_test() -> dict:
-    topic_id = app.current_event.json_body["topic_id"]
+
+    if app.current_event.body is not None:
+        topic_id = app.current_event.json_body.get("topic_id", None)
+    else:
+        topic_id = None
+
     new_test = service.make_new_test(student_id=student_id, topic_id=topic_id)
 
     new_test['create_time'] = new_test['create_time'].isoformat()
@@ -77,6 +89,15 @@ def put_new_answer(test_id: int, question_id: int) -> None:
     service.submit_answer(student_id=student_id, test_id=test_id, option_id=option_id, question_id=question_id)
 
 
+@app.delete("/tests/<test_id>")
+def delete_test(test_id: int) -> None:
+    print("I've reached the api layer")
+    service.delete_test(test_id=test_id)
+
+
+def handler(event, context):
+    return app.resolve(event, context)
+
 # @app.exception_handler(Error)
 # def handle_value_error(ex: Error):
 #     conn.rollback()
@@ -85,9 +106,6 @@ def put_new_answer(test_id: int, question_id: int) -> None:
 #         content_type=content_types.APPLICATION_JSON,
 #         body=f"{{\"error\":{ex}}}",
 #     )
-
-def handler(event, context):
-    return app.resolve(event, context)
 
 # def handler(event, context):
 #     print('request: {}'.format(json.dumps(event)))

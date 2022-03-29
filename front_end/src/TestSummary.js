@@ -11,7 +11,7 @@ function TestSummaryHeader({testId, totalScore, maxTestScore, correctAnswers, to
     <>
       <div style={header} className="d-flex justify-content-around">
         <div>Test: {testId}</div>
-        <div>Score: {totalScore}/{maxTestScore}</div>
+        <div>Score: {correctAnswers.length}/{totalQuestions}</div>
       </div>
       <div style={header} className="d-flex justify-content-center">{correctAnswers.length} correct out of {totalQuestions} questions</div>
     </>

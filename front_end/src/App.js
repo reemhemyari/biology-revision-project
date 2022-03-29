@@ -12,8 +12,8 @@ import { NavigationBar } from './components/NavigationBar'
 function App() {
   return (
     <>
-      <NavigationBar/>
       <Router>
+        <NavigationBar/>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/modules" element={<Modules />} />
