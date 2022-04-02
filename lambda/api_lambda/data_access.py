@@ -53,6 +53,20 @@ class DataAccess:
             self.conn.rollback()
             raise
 
+    def get_num_of_questions_in_topics(self) -> List[dict]:
+        try:
+            cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("SELECT t.topic_id, COUNT(*) AS num_questions FROM topic t JOIN topicquestion tq ON "
+                           "t.topic_id = tq.topic_id GROUP BY t.topic_id")
+            topics_and_count = cursor.fetchall()
+            cursor.close()
+
+            return topics_and_count
+
+        except Exception:
+            self.conn.rollback()
+            raise
+
     def get_all_questions(self) -> List[dict]:  # returns a list question ids for all questions
         try:
             cursor = self.conn.cursor(cursor_factory=RealDictCursor)

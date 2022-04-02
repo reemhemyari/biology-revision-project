@@ -19,18 +19,30 @@ class Service:
 
         return questions_list
 
-    def get_modules(self) -> List[dict]:
+    def get_modules(self, num_questions) -> List[dict]:
         modules = self.data.get_modules()
         topics = self.data.get_topics()
+
+        print("og topic list", topics)
 
         modules_list = []
         for i in range(len(modules)):
             module = modules[i]
             mod_topics = []
 
+            topics_and_count = self.data.get_num_of_questions_in_topics()
+            topic_count = {topic_count_item['topic_id']: topic_count_item['num_questions'] for topic_count_item in topics_and_count}
+            print("topic count", topic_count)
+
             for topic in topics:
-                if topic["module_id"] == module["module_id"]:
+                if topic['module_id'] == module['module_id']:
+                    if topic['topic_id'] in topic_count:
+                        topic['enough_questions_for_test'] = topic_count[topic['topic_id']] >= num_questions
+                    else:
+                        topic['enough_questions_for_test'] = False
                     mod_topics.append(topic)
+
+            print("modified topic list", topics)
 
             module['topics'] = mod_topics
             modules_list.append(module)
@@ -61,7 +73,7 @@ class Service:
 
         return tests
 
-    def make_new_test(self, student_id: int, topic_id: int = None, num_questions: int = 10) -> dict:
+    def make_new_test(self, student_id: int, num_questions: int, topic_id: int = None) -> dict:
         test_id = self.data.new_test(student_id=student_id, topic_id=topic_id, num_questions=num_questions)  # new test record and return test id
         print("a new test has been created with the test id", test_id, "- service")
 

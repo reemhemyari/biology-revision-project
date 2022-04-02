@@ -16,12 +16,12 @@ questions = ChooseQuestions(data_access=data)
 service = Service(data_access=data, choose_questions=questions)
 
 student_id = 245  # temporarily hard-coded until I can do logins
-
+num_questions = 10
 
 # get list of modules with topics
 @app.get("/modules")
 def get_modules():
-    modules_list = service.get_modules()
+    modules_list = service.get_modules(num_questions=num_questions)
     return modules_list
 
 
@@ -75,7 +75,7 @@ def post_new_test() -> dict:
         topic_id = None
 
     print("a new test is about to be created - lambda")
-    new_test = service.make_new_test(student_id=student_id, topic_id=topic_id)
+    new_test = service.make_new_test(student_id=student_id, topic_id=topic_id, num_questions=num_questions)
 
     new_test['create_time'] = new_test['create_time'].isoformat()
     # better at this layer cuz allows manipulation in service

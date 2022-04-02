@@ -69,7 +69,6 @@ export const UnfinishedTests = () => {
     const topicName = topic?.topic_name;
 
     if (topicName == null) {
-      console.log('hi')
       return 'Random'
     } else {
       return topicName
@@ -81,7 +80,7 @@ export const UnfinishedTests = () => {
       {tests.map((test) => (
         <Test key={test.test_id}>
           <div>Test: {test.test_id}</div>
-          <div>{getTopicName(test.topic_id)}</div>
+          <div className="text-center" style={{ minWidth: 250 }}>{getTopicName(test.topic_id)}</div>
           <div>Started: {test.create_time.replace('T', ' ').substr(0, 19)}</div>
           <TestButton onClick={() => testClick(test.test_id)}>Continue</TestButton>
           <TestButton onClick={() => deleteClick(test.test_id)}>Delete</TestButton>

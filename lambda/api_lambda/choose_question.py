@@ -148,7 +148,7 @@ class ChooseQuestions:
         ordered_topic_list = self.get_topics_ordered_by_strength(student_id=student_id)
         print("ordered list:", ordered_topic_list, "- choose questions")
 
-        if len(ordered_topic_list) <= 4:
+        if 0 < len(ordered_topic_list) <= 4:
             # the 'best' topic is removed if the list contains four or less topics
             # we don't know how much better or worse it is in comparison to the uncompleted topics
             ordered_topic_list.pop()
@@ -161,12 +161,12 @@ class ChooseQuestions:
         num_of_worst_topic_questions = floor(num_questions * 0.2)
         num_of_questions_from_weaker_topics = floor(num_questions * 0.1)
 
-        if len(ordered_topic_list) > 1:
+        if len(ordered_topic_list) >= 1:
             print("worst topic questions")
             final_questions = self.pick_random_questions(num_of_worst_topic_questions,
                                                          ordered_topic_list[0]["topic_id"])
 
-            min_length_value = self.find_min_value(four=4, length_of_list=len(final_questions))
+            min_length_value = self.find_min_value(four=4, length_of_list=len(ordered_topic_list))
             print("min value", min_length_value)
             for index in range(1, min_length_value, 1):
                 print("weaker topic", index)

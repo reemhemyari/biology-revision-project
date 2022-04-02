@@ -26,7 +26,7 @@ const TopicName = styled.div`
   font-size: 1.1em;
 `;
 
-function Topic({children, topicId}) {
+function Topic({children, topicId, canCreate}) {
   const navigate = useNavigate();
 
   function topicClick(topicId) {
@@ -44,7 +44,7 @@ function Topic({children, topicId}) {
   return (
     <TopicContainer>
       <TopicName>{children}</TopicName>
-      <TestButton onClick={() => topicClick(topicId)}>Create Test</TestButton>
+      <TestButton onClick={() => topicClick(topicId)} disabled={!canCreate}>Create Test</TestButton>
     </TopicContainer>
   );
 }
@@ -65,7 +65,7 @@ export const Modules = () => {
         <React.Fragment key={module.module_id}>
           <Module>Module {module.module_num}</Module>
           {module.topics.map((topic) => (
-              <Topic key={topic.topic_id} topicId={topic.topic_id}>{topic.topic_name}</Topic>
+              <Topic key={topic.topic_id} topicId={topic.topic_id} canCreate={topic.enough_questions_for_test}>{topic.topic_name}</Topic>
           ))}
         </React.Fragment>
       ))}
