@@ -87,7 +87,6 @@ class DataAccess:
             cursor = self.conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("SELECT question_id FROM topicquestion WHERE topic_id= %s", (topic_id,))
             question_ids = cursor.fetchall()
-            print(question_ids)
 
         cursor.close()
         return question_ids
@@ -116,9 +115,10 @@ class DataAccess:
     def get_completed_test_questions(self, student_id: int) -> List[dict]:
         try:
             cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-            cursor.execute("SELECT t.topic_id, tq.update_time, o.correct FROM testquestion tq JOIN option o ON "
-                           "tq.option_id=o.option_id JOIN test t ON tq.test_id=t.test_id WHERE update_time > NOW() - "
-                           "INTERVAL '1 YEAR' AND t.student_id=%s", (student_id,))
+            cursor.execute("SELECT toq.topic_id, tq.update_time, o.correct FROM testquestion tq JOIN option o ON "
+                           "tq.option_id=o.option_id JOIN topicquestion toq ON tq.question_id=toq.question_id JOIN "
+                           "test t ON tq.test_id=t.test_id WHERE update_time > NOW() - INTERVAL '1 YEAR' AND "
+                           "t.student_id=%s", (student_id,))
             test_questions = cursor.fetchall()
             cursor.close()
 

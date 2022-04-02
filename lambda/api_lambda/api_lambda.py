@@ -74,11 +74,13 @@ def post_new_test() -> dict:
     else:
         topic_id = None
 
+    print("a new test is about to be created - lambda")
     new_test = service.make_new_test(student_id=student_id, topic_id=topic_id)
 
     new_test['create_time'] = new_test['create_time'].isoformat()
     # better at this layer cuz allows manipulation in service
 
+    print("we back to the lambda")
     return new_test
 
 

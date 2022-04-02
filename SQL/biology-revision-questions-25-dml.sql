@@ -41,3 +41,48 @@ INSERT INTO option VALUES (1244, 162, 'Haemoglobin has diffused through the eryt
 INSERT INTO option VALUES (1245, 162, 'Water has entered the erythrocytes by osmosis, causing them to swell and burst and the haemoglobin is released into the solution', True);
 INSERT INTO option VALUES (1246, 162, 'Water has entered erythrocytes by osmosis. As the cells are now less dense than the solution, they will not sediment on centrifugation', False);
 INSERT INTO option VALUES (1247, 162, 'Water has left the cells by osmosis, causing them to shrink and becometoo small to sediment on centrifugation', False);
+
+###################
+INSERT INTO question VALUES (166, '?', null);
+INSERT INTO topicquestion VALUES (166, 25);
+
+INSERT INTO option VALUES (1260, 166, '', False);
+INSERT INTO option VALUES (1261, 166, '', False);
+INSERT INTO option VALUES (1262, 166, '', False);
+INSERT INTO option VALUES (1263, 166, '', False);
+
+
+INSERT INTO question VALUES (167, '?', null);
+INSERT INTO topicquestion VALUES (167, 25);
+
+INSERT INTO option VALUES (1264, 167, '', False);
+INSERT INTO option VALUES (1265, 167, '', False);
+INSERT INTO option VALUES (1266, 167, '', False);
+INSERT INTO option VALUES (1267, 167, '', False);
+
+
+INSERT INTO question VALUES (168, '?', null);
+INSERT INTO topicquestion VALUES (168, 25);
+
+INSERT INTO option VALUES (1268, 168, '', False);
+INSERT INTO option VALUES (1269, 168, '', False);
+INSERT INTO option VALUES (1270, 168, '', False);
+INSERT INTO option VALUES (1271, 168, '', False);
+
+
+INSERT INTO question VALUES (169, '?', null);
+INSERT INTO topicquestion VALUES (169, 25);
+
+INSERT INTO option VALUES (1272, 169, '', False);
+INSERT INTO option VALUES (1273, 169, '', False);
+INSERT INTO option VALUES (1274, 169, '', False);
+INSERT INTO option VALUES (1275, 169, '', False);
+
+
+INSERT INTO question VALUES (170, '?', null);
+INSERT INTO topicquestion VALUES (170, 25);
+
+INSERT INTO option VALUES (1276, 170, '', False);
+INSERT INTO option VALUES (1277, 170, '', False);
+INSERT INTO option VALUES (1278, 170, '', False);
+INSERT INTO option VALUES (1279, 170, '', False);

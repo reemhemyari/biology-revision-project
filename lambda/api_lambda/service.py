@@ -61,12 +61,17 @@ class Service:
 
         return tests
 
-    def make_new_test(self, student_id: int, topic_id: int = None, num_questions: int = 5) -> dict:
+    def make_new_test(self, student_id: int, topic_id: int = None, num_questions: int = 10) -> dict:
         test_id = self.data.new_test(student_id=student_id, topic_id=topic_id, num_questions=num_questions)  # new test record and return test id
+        print("a new test has been created with the test id", test_id, "- service")
 
-        question_ids = self.choose_questions.pick_random_questions(num_questions=num_questions, topic_id=topic_id)
+        if topic_id is None:
+            question_ids = self.choose_questions.choose_questions_for_personalised_test(student_id=student_id, num_questions=num_questions)
+        else:
+            question_ids = self.choose_questions.pick_random_questions(num_questions=num_questions, topic_id=topic_id)
+
+        print("these are the question ids that were picked", question_ids, "- service")
         self.data.add_questions_to_test(test_id=test_id, question_ids=question_ids)
-
         questions = self.__get_questions_and_options_for_test(test_id=test_id)
 
         for question in questions:

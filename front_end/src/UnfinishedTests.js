@@ -58,12 +58,30 @@ export const UnfinishedTests = () => {
         .catch(console.log);
   }
 
+
+  function getTopicName(topic_id) {
+    var allTopics = [];
+    console.log(topic_id)
+    modules.forEach((module) => allTopics.push(module.topics))
+
+    var flattenedTopicList = allTopics.flat(Infinity)
+    var topic = flattenedTopicList.find((topic) => topic.topic_id === topic_id)
+    const topicName = topic?.topic_name;
+
+    if (topicName == null) {
+      console.log('hi')
+      return 'Random'
+    } else {
+      return topicName
+    };
+  };
+
   return (
     <div className="container" style={{ paddingTop: 10 }}>
       {tests.map((test) => (
         <Test key={test.test_id}>
           <div>Test: {test.test_id}</div>
-          <div>topic name</div>
+          <div>{getTopicName(test.topic_id)}</div>
           <div>Started: {test.create_time.replace('T', ' ').substr(0, 19)}</div>
           <TestButton onClick={() => testClick(test.test_id)}>Continue</TestButton>
           <TestButton onClick={() => deleteClick(test.test_id)}>Delete</TestButton>
