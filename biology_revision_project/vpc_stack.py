@@ -1,7 +1,5 @@
 from aws_cdk import(
-    core as cdk,aws_rds,aws_lambda,aws_apigateway,
-    aws_route53,aws_route53_targets, aws_ec2,
-    aws_certificatemanager
+    core as cdk, aws_ec2
 )
 
 

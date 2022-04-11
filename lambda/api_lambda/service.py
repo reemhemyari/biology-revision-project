@@ -16,6 +16,7 @@ class Service:
         for question in questions_list:
             options = self.data.get_options_for_question(question_id=question['question_id'])
             question['options'] = options
+            # key value 'options' is added to question dictionary and set to the list of options in that question
 
         return questions_list
 
@@ -23,16 +24,13 @@ class Service:
         modules = self.data.get_modules()
         topics = self.data.get_topics()
 
-        print("og topic list", topics)
-
-        modules_list = []
+        modules_list = []  # TODO
         for i in range(len(modules)):
             module = modules[i]
             mod_topics = []
 
             topics_and_count = self.data.get_num_of_questions_in_topics()
             topic_count = {topic_count_item['topic_id']: topic_count_item['num_questions'] for topic_count_item in topics_and_count}
-            print("topic count", topic_count)
 
             for topic in topics:
                 if topic['module_id'] == module['module_id']:
@@ -41,8 +39,6 @@ class Service:
                     else:
                         topic['enough_questions_for_test'] = False
                     mod_topics.append(topic)
-
-            print("modified topic list", topics)
 
             module['topics'] = mod_topics
             modules_list.append(module)
@@ -55,11 +51,11 @@ class Service:
 
     def get_test(self, student_id: int, test_id: int) -> dict:
         test = self.data.get_test(student_id=student_id, test_id=test_id)
-        # TODO if test does not exist maybe print error message
 
-        # get all the questions and their corresponding options for the test
+        # get all the test questions and their corresponding options for the test
         questions_list = self.__get_questions_and_options_for_test(test_id=test_id)
         test['questions'] = questions_list
+        # key value 'questions' is added to test dictionary and set to the list of questions
 
         return test
 
@@ -74,12 +70,13 @@ class Service:
         return tests
 
     def make_new_test(self, student_id: int, num_questions: int, topic_id: int = None) -> dict:
-        test_id = self.data.new_test(student_id=student_id, topic_id=topic_id, num_questions=num_questions)  # new test record and return test id
+        # new test record created and test id returned
+        test_id = self.data.new_test(student_id=student_id, topic_id=topic_id, num_questions=num_questions)
         print("a new test has been created with the test id", test_id, "- service")
 
-        if topic_id is None:
+        if topic_id is None:  # if a topic test is created
             question_ids = self.choose_questions.choose_questions_for_personalised_test(student_id=student_id, num_questions=num_questions)
-        else:
+        else:  # if a personalised test is created
             question_ids = self.choose_questions.pick_random_questions(num_questions=num_questions, topic_id=topic_id)
 
         print("these are the question ids that were picked", question_ids, "- service")
@@ -134,6 +131,4 @@ class Service:
         self.data.update_points_earned(test_id=test_id, points_earned=points_earned)
 
     def delete_test(self, test_id) -> None:
-        print("I've reached the service layer")
         self.data.delete_test(test_id=test_id)
-        print("Test should be deleted now - service")

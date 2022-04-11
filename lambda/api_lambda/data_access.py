@@ -145,10 +145,10 @@ class DataAccess:
     def get_questions_from_test(self, test_id: int) -> List[dict]:
         # gets list of questions specific to a test
         try:
-            print(test_id)
+            print("test id", test_id)
             cursor = self.conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("SELECT q.*, tq.option_id FROM testquestion tq JOIN question q ON "
-                           "q.question_id=tq.question_id WHERE tq.test_id= %s", (test_id,))
+                           "q.question_id=tq.question_id WHERE tq.test_id= %s ORDER BY question_num ASC", (test_id,))
             questions = cursor.fetchall()
             cursor.close()
 
@@ -212,12 +212,10 @@ class DataAccess:
 
     def add_questions_to_test(self, test_id: int, question_ids: List[dict]) -> None:
         try:
-            for question_id_dict in question_ids:
+            for index, question_id_dict in enumerate(question_ids):
                 cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-                cursor.execute("INSERT INTO testquestion (question_id, test_id) VALUES (%s, %s)",
-                               (question_id_dict['question_id'], test_id))
-
-            self.conn.commit()
+                cursor.execute("INSERT INTO testquestion (question_id, test_id, question_num) VALUES (%s, %s, %s)",
+                               (question_id_dict['question_id'], test_id, index + 1))
 
         except Exception:
             self.conn.rollback()
@@ -292,146 +290,6 @@ class DataAccess:
             cursor.execute("DELETE FROM test WHERE test_id=%s", (test_id,))
             self.conn.commit()
             cursor.close()
-            print("deleted test - data")
         except Exception:
             self.conn.rollback()
             raise
-
-
-    # def __get_questions_options_for_test(self, test_id: int) -> List[dict]:
-    #     cursor = self.conn.cursor()
-    #     cursor.execute("SELECT question_id FROM testquestion WHERE test_id= %s", (test_id,))
-    #     question_ids = cursor.fetchall()
-    #
-    #     q_ids = []
-    #     for i in question_ids:
-    #         q_ids.append(i[0])
-    #
-    #     question_id_tuple = tuple(q_ids)
-    #
-    #     cursor2 = self.conn.cursor(cursor_factory=RealDictCursor)
-    #     cursor2.execute("SELECT * FROM question WHERE question_id IN %s", (question_id_tuple,))
-    #     questions = cursor2.fetchall()
-    #
-    #     cursor4 = self.conn.cursor(cursor_factory=RealDictCursor)
-    #     cursor4.execute("SELECT * FROM option WHERE question_id IN %s", (question_id_tuple,))
-    #     options = cursor4.fetchall()
-    #
-    #     for question in questions:
-    #         question_options = []
-    #         for option in options:
-    #             if option['question_id'] == question['question_id']:
-    #                 question_options.append(option)
-    #
-    #         question['options'] = question_options
-    #
-    #     return questions
-    #
-    # def get_question_ids(self, topic_id: int = None) -> List[int]:
-    #     if topic_id is None:
-    #         cursor = self.conn.cursor("SELECT question_id FROM question")
-    #         question_ids = cursor.fetchall()  # I'm not sure whether this is going to be a list
-    #     else:
-    #         cursor = self.conn.cursor("SELECT question_id FROM question WHERE topic_id= %s", (topic_id,))
-    #         question_ids = cursor.fetchall()
-    #
-    #     return question_ids
-    #
-    # def get_questions_with_id(self, question_ids: List[int]) -> List[dict]:
-    #     # the id list will come from the randomly picked questions from choose questions
-    #     cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-    #     cursor.execute("SELECT * FROM question WHERE question_id IN %s", (question_ids,))
-    #     questions = cursor.fetchall()
-    #     return questions
-    #
-    # def get_modules(self) -> List[dict]:
-    #     try:
-    #         cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-    #         cursor.execute('SELECT * FROM module')
-    #         modules = cursor.fetchall()  # returns data outputted from query
-    #
-    #         cursor2 = self.conn.cursor(cursor_factory=RealDictCursor)
-    #         cursor2.execute('SELECT * FROM topic')
-    #         topics = cursor2.fetchall()
-    #
-    #         modules_list = []
-    #         for i in range(len(modules)):
-    #             module = modules[i]
-    #             mod_topics = []
-    #
-    #             for topic in topics:
-    #                 if topic["module_id"] == module["module_id"]:
-    #                     mod_topics.append(topic)
-    #
-    #             module['topics'] = mod_topics
-    #             modules_list.append(module)
-    #         return modules_list
-    #
-    #     except Exception:
-    #         self.conn.rollback()
-    #         raise
-    #
-    # def get_test(self, student_id: int, test_id: int) -> dict:
-    #     try:
-    #         # select a specific student test
-    #         cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-    #         cursor.execute("SELECT * FROM test WHERE test_id= %s AND student_id= %s", (test_id, student_id))
-    #         test = cursor.fetchone()  # need to consider what happens if test does not exist
-    #
-    #         # get all the questions and their corresponding options for the test
-    #         questions = self.__get_questions_options_for_test(test_id)
-    #         test['questions'] = questions
-    #         return test
-    #
-    #     except Exception:
-    #         self.conn.rollback()
-    #         raise
-    #
-    # def get_tests(self, student_id: int, complete: bool = None) -> List[dict]:
-    #     try:
-    #         cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-    #         if complete is None:  # select all the student's tests from the database
-    #             cursor.execute("SELECT * FROM test WHERE student_id= %s", (student_id,))
-    #             tests = cursor.fetchall()
-    #         else:  # select the users in/complete tests
-    #             cursor.execute("SELECT * FROM test WHERE complete=%s AND student_id= %s", (complete, student_id))
-    #             tests = cursor.fetchall()
-    #
-    #         for test in tests:  # get all the questions and their corresponding options for a test
-    #             questions = self.__get_questions_options_for_test(test['test_id'])
-    #             test['questions'] = questions
-    #
-    #         return tests
-    #
-    #     except Exception:  # if something goes wrong rollback the connection and raise an error
-    #         self.conn.rollback()
-    #         raise
-    #
-    # def make_new_test(self, student_id: int, question_ids: List[int], topic_id: int = None) -> dict:
-    #     # how does the list of ids get passed in ?
-    #     # add new test record to the test table
-    #     cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-    #     cursor.execute("INSERT INTO test (student_id, points_earned, num_questions, topic_id, complete, date_time) "
-    #                    "VALUES %s RETURNING test_id", (student_id, 0, 10, topic_id, False, None))
-    #     # this might not work because you haven't given a test_id
-    #     test_id = cursor.fetchone()
-    #
-    #     # add each question id in the new test to a test question record
-    #     for question_id in question_ids:
-    #         cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-    #         cursor.execute("INSERT INTO testquestion (question_id, test_id, option_id, date_time) VALUES %s",
-    #                        (question_id, test_id, None, None))
-    #
-    #     # go fetch that test and return it
-    #     test = self.get_test(student_id, test_id)
-    #     return test
-    #
-    # def submit_answer(self, student_id: int, test_id: int, option_id: int) -> None:
-    #     # for the specific test question, update option_id
-    #     # -> you can get the question id from the option record
-    #
-    #     # if option with option_id is correct, add one to points earned
-    #
-    #     # you need a condition for if it is the last question -> how would you know ??
-    #     # if it is the last question change complete to true
-    #     pass

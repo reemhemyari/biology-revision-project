@@ -1,4 +1,5 @@
 INSERT INTO student VALUES (245, 'Reem', 'Al-Hemyari', 'reem.hemyari@gmail.com');
+INSERT INTO student VALUES (872, 'Rebecca', 'Stuart', 'rebecca@gmail.com');
 
 INSERT INTO module VALUES (1, 1);
 INSERT INTO module VALUES (2, 2);

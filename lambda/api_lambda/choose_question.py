@@ -21,8 +21,7 @@ class ChooseQuestions:
 
         return unseen_questions
 
-    def pick_random_questions(self, num_questions: int, topic_id: int = None, exc_questions: List[dict] = None) -> List[
-        dict]:
+    def pick_random_questions(self, num_questions: int, topic_id: int = None, exc_questions: List[dict] = None) -> List[dict]:
         all_question_ids = self.data.get_question_ids(topic_id=topic_id)
         if exc_questions is not None:
             for question_id in all_question_ids:
@@ -126,10 +125,10 @@ class ChooseQuestions:
         list_to_be_ordered = []
 
         for topic_id in questions_in_topics.keys():
-            print(topic_id)
+            print("topic id", topic_id, "-get topics ordered by strength")
             topic_score = self.get_topic_score(questions=questions_in_topics[topic_id])
             print("appending the following:", {"topic_id": topic_id, "topic_score": topic_score},
-                  "- topics ordered by strength")
+                  "- get topics ordered by strength")
             list_to_be_ordered.append({"topic_id": topic_id, "topic_score": topic_score})
 
         ordered_list = sorted(list_to_be_ordered, key=itemgetter('topic_score'))
@@ -143,7 +142,6 @@ class ChooseQuestions:
             return length_of_list
 
     def choose_questions_for_personalised_test(self, student_id: int, num_questions: int) -> List[dict]:
-        print("choose questions")
         final_questions = []
         ordered_topic_list = self.get_topics_ordered_by_strength(student_id=student_id)
         print("ordered list:", ordered_topic_list, "- choose questions")

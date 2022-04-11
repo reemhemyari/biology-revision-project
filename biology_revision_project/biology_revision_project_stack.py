@@ -14,37 +14,6 @@ class BiologyRevisionProjectStack(cdk.Stack):
         db_cluster = self.aurora_serverless_db(vpc)
 
         # Defining an AWS lambda resource
-        # project_lambda = PythonFunction(
-        #     self, "aurora-serverless-db",
-        #     entry="lambda",
-        #     index="aurora_serverless_db.py",
-        #     runtime=aws_lambda.Runtime.PYTHON_3_8,
-        #     vpc=vpc,
-        #     environment={
-        #         'username': db_cluster.secret.secret_value_from_json('username').to_string(),
-        #         'password': db_cluster.secret.secret_value_from_json('password').to_string(),
-        #         'db_endpoint': db_cluster.cluster_endpoint.hostname
-        #     }
-        # )
-
-        # project_lambda = PythonFunction(
-        #     self, "aurora-serverless-db",
-        #     entry="lambda/api_lambda",
-        #     index="aurora_serverless_db.py",
-        #     runtime=aws_lambda.Runtime.PYTHON_3_8,
-        #     vpc=vpc,
-        #     environment={
-        #         'username': db_cluster.secret.secret_value_from_json('username').to_string(),
-        #         'password': db_cluster.secret.secret_value_from_json('password').to_string(),
-        #         'db_endpoint': db_cluster.cluster_endpoint.hostname
-        #     },
-        #     layers=[PythonLayerVersion(
-        #         self, 'api-lambda-layer',
-        #         compatible_runtimes=[aws_lambda.Runtime.PYTHON_3_8],
-        #         entry='lambda/api_lambda_layer',  # point this to library directory
-        #     )]
-        # )
-
         project_lambda = PythonFunction(
             self, "aurora-serverless-db",
             entry="lambda/api_lambda",
@@ -102,25 +71,6 @@ class BiologyRevisionProjectStack(cdk.Stack):
             api,
             base_path="biologyrevision"
         )
-
-        # A Records
-        # aws_route53.ARecord(
-        #     self, "api-dns",
-        #     zone=zone,
-        #     record_name=domain_name,
-        #     target=aws_route53.RecordTarget.from_alias(
-        #         aws_route53_targets.ApiGateway(api)
-        #     )
-        # )
-        #
-        # aws_route53.ARecord(
-        #     self, "api-dns-www",
-        #     zone=zone,
-        #     record_name=f"www.{domain_name}",
-        #     target=aws_route53.RecordTarget.from_alias(
-        #         aws_route53_targets.ApiGateway(api)
-        #     )
-        # )
 
         aws_route53.ARecord(
             self, "api-dns-api",

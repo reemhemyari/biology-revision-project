@@ -90,7 +90,8 @@ CREATE TABLE test (
 CREATE TABLE testquestion (
 	question_id INT,
 	test_id INT,
-	option_id INT, 
+	question_num INT,
+	option_id INT,
 	update_time TIMESTAMP WITH TIME ZONE,
 
 	PRIMARY KEY (test_id, question_id),

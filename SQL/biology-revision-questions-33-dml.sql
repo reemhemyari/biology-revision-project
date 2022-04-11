@@ -41,3 +41,48 @@ INSERT INTO option VALUES (1256, 165, 'Create cohesion between water molecules',
 INSERT INTO option VALUES (1257, 165, 'Provided immune response', False);
 INSERT INTO option VALUES (1258, 165, 'Allow sap movement', True);
 INSERT INTO option VALUES (1259, 165, 'Allow osmosis', False);
+
+
+INSERT INTO question VALUES (171, 'How do mineral ions enter a plant?', null);
+INSERT INTO topicquestion VALUES (171, 33);
+
+INSERT INTO option VALUES (1280, 171, 'By active transport in root hair cells', True);
+INSERT INTO option VALUES (1281, 171, 'Through the stomata', False);
+INSERT INTO option VALUES (1282, 171, 'Through the roots', False);
+INSERT INTO option VALUES (1283, 171, 'By osmosis in root hair cells', False);
+
+
+INSERT INTO question VALUES (172, 'How does water enter a plant?', null);
+INSERT INTO topicquestion VALUES (172, 33);
+
+INSERT INTO option VALUES (1284, 172, 'By active transport in root hair cells', False);
+INSERT INTO option VALUES (1285, 172, 'Through the stomata', False);
+INSERT INTO option VALUES (1286, 172, 'Through the roots', False);
+INSERT INTO option VALUES (1287, 172, 'By osmosis in root hair cells', True);
+
+
+INSERT INTO question VALUES (173, 'What is the loss of water vapour from the leaves called?', null);
+INSERT INTO topicquestion VALUES (173, 33);
+
+INSERT INTO option VALUES (1288, 173, 'Evaporation', False);
+INSERT INTO option VALUES (1289, 173, 'Osmosis', False);
+INSERT INTO option VALUES (1290, 173, 'Transpiration', True);
+INSERT INTO option VALUES (1291, 173, 'Diffusion', False);
+
+
+INSERT INTO question VALUES (174, 'Which conditions speed up the rate of transpiration?', null);
+INSERT INTO topicquestion VALUES (174, 33);
+
+INSERT INTO option VALUES (1292, 174, 'Hot wet and windy', False);
+INSERT INTO option VALUES (1293, 174, 'Hot dry and windy', True);
+INSERT INTO option VALUES (1294, 174, 'Cold wet and windy', False);
+INSERT INTO option VALUES (1295, 174, 'Cold dry and windy', False);
+
+
+INSERT INTO question VALUES (175, 'What process describes the loading of substances into the phloem?', null);
+INSERT INTO topicquestion VALUES (175, 33);
+
+INSERT INTO option VALUES (1296, 175, 'Active transport', False);
+INSERT INTO option VALUES (1297, 175, 'Facilitated diffusion', False);
+INSERT INTO option VALUES (1298, 175, 'Diffusion', False);
+INSERT INTO option VALUES (1299, 175, 'Active loading', True);

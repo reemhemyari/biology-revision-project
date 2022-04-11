@@ -1,12 +1,3 @@
---INSERT INTO question VALUES (30, 'Which of the following options is not needed to carry out a DNA precipitation reaction?', null);
---INSERT INTO topicquestion VALUES (30, 23);
---
---INSERT INTO option VALUES (900, 30, 'Detergent', False);
---INSERT INTO option VALUES (1000, 30, 'Sodium chloride', False);
---INSERT INTO option VALUES (1100, 30, 'Ethanol', False);
---INSERT INTO option VALUES (1200, 30, 'DNA helicase', True);
-
-
 INSERT INTO question VALUES (40, 'The rate of an enzyme-controlled reaction at 15°C is 0.8 cm^3 min^-1. The optimum temperature temperature for the reaction is at 40°C. The reaction has a Q10 of 2. Which of the following options gives the rate of reaction at 25°C', null);
 INSERT INTO topicquestion VALUES (40, 24);
 
